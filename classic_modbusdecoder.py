@@ -475,7 +475,7 @@ def getModbusData(modeAwake, classicHost, classicPort):
         idx = decoded["ReasonForResting"]
         decoded["ReasonForRestingText"] = rest_reason_arr[idx]
     except:
-        log.error(f"ReasonForRestingText Error index:{idx}")
+        log.warning(f"ReasonForRestingText Error index:{idx}")
         decoded[f"ReasonForRestingText"] = f"Unknown code: {idx}"
 
     return decoded
