@@ -19,19 +19,11 @@ import logging
     format="%(levelname)-5s %(module)s:%(lineno)s %(message)s",
 )'''
 
-
 data = {}
-data1 = {}
-# Need to supply IP address and port number. In this example, there are two Midnite Classic 150
-# solar charge controllers.
-data = getModbusData(False, "192.168.20.10", 502)
-print("\nClassic1: ", data)
-pprint.pp(data)
-print(
-    "\n\n=================================================================================\n\n"
-)
+for IP in ('192.168.20.10', '192.168.20.12'):
+    print("\n\n=================================================================================")
+    data = getModbusData(False, IP, 502)
+    print(f"{data['Name']}:")
+    pprint.pp(data)
 
-data1 = getModbusData(False, "192.168.20.12", 502)
-print("\nClassic2: ", data1)
-pprint.pp(data1)
 print("Done...")
