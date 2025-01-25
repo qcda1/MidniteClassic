@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 '''
-Simple program to extract Midnite Classic solar charge controller using classic_modbusdecoder.py module.
+Simple program to extract Midnite Classic solar charge controller data using classic_modbusdecoder.py module.
 
 Based on the following Github repository:
 
