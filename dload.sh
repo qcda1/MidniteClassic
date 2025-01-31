@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REPO="https://raw.githubusercontent.com/qcda1/MidniteClassic/refs/heads/main/"
+REPO="https://raw.githubusercontent.com/qcda1/MidniteClassic/main"
 FILES=("classic_modbusdecoder.py" "Payload.py")  # Liste des fichiers à télécharger
 
 for file in "${FILES[@]}"; do
@@ -12,7 +12,7 @@ for file in "${FILES[@]}"; do
         mv "$file" "$file.bak"
     fi
     
-    echo "Downloading $file..."
+    echo "Downloading $file from $REPO/$file..."
     curl -o "$file" "$REPO/$file"
 done
 
