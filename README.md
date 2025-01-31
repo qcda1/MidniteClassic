@@ -16,3 +16,9 @@ Program classic.py is an example of data extraction on a two solar charge contro
 Notes:
 - The module only support Ethernet attached solar charge controllers
 - It does not support writing to registers for now.
+
+## Installation
+
+You will need pymodbus module:
+pip install pymodbus
+
