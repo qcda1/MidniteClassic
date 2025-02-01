@@ -22,3 +22,6 @@ Notes:
 You will need pymodbus module:
 pip install pymodbus
 
+In the repo, you will find a bash script that will download the necessary modules to get things underway. the bash script "dload.sh" can be downloaded with the following command from your computer:
+curl -o https://
+
