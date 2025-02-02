@@ -39,6 +39,6 @@ Run the script from your working directory: ./dload.sh
 This will download classic_modbusdecoder.py and Payload.py
 
 
-Once you have the repo or just the necessary files in your system, you can get a copy of the classic.py program and modify it for your environment. This simple program will help determine if all is working.
+Once you have the repo or just the necessary files in your system, you can take a copy of the classic.py program and modify it for your environment (IP address of the Classic). This simple program will quickly confirm if everything is working.
 
 
