@@ -30,7 +30,7 @@ pip install pymodbus
 
 In the repo, you will find a bash script that will download the necessary modules to get things underway. the bash script "dload.sh" can be downloaded with the following command from your computer:
 
-curl -O https://raw.githubusercontent.com/qcda1/MidniteClassic/main/dload.sh
+    curl -O https://raw.githubusercontent.com/qcda1/MidniteClassic/main/dload.sh
 
 Make sure the bash script is executable: chmod +x dload.sh
 
