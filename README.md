@@ -20,17 +20,22 @@ Notes:
 ## Installation
 Two KISS approaches.
 
-1- CLone the repo
+1- Clone the repo
 You can clone this repo on your system. It will copy all the content.
-You will need pymodbus module as well: pip install pymodbus
+You will need pymodbus module as well:
+
+`pip install pymodbus==3.8.6`
 
 2- Download just the necessary files
 You will need pymodbus module:
-pip install pymodbus
+
+`pip install pymodbus==3.8.6`
+
 
 In the repo, you will find a bash script that will download the necessary modules to get things underway. the bash script "dload.sh" can be downloaded with the following command from your computer:
 
-    curl -O https://raw.githubusercontent.com/qcda1/MidniteClassic/main/dload.sh
+`curl -O https://raw.githubusercontent.com/qcda1/MidniteClassic/main/dload.sh`
+
 
 Make sure the bash script is executable: chmod +x dload.sh
 
