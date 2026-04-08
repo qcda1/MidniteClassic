@@ -14,7 +14,7 @@
 
 from pymodbus.constants import Endian
 from pymodbus.client import ModbusTcpClient as ModbusClient
-from Payload import BinaryPayloadDecoder
+from Payload import BinaryPayloadDecoder, Endian
 from collections import OrderedDict
 import logging
 import sys
@@ -100,6 +100,14 @@ def doDecode(addr, decoder):
                 ("PWM_ReadOnly", decoder.decode_16bit_uint()),  # 4141
                 ("Reason_For_Reset", decoder.decode_16bit_uint()),  # 4142
                 ("EqualizeTime", decoder.decode_16bit_uint()),  # 4143
+            ]
+        )
+    elif addr == 4149:
+        decoded = OrderedDict(
+            [
+                ("AbsorbVoltageSetPoint", decoder.decode_16bit_uint()),  # 4149
+                ("FloatVoltageSetPoint", decoder.decode_16bit_int()),  # 4150
+                ("EqualizeVoltageSetPoint", decoder.decode_16bit_int()),  # 4151
             ]
         )
     elif addr == 4360:
