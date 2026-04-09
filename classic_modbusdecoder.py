@@ -140,7 +140,7 @@ def doDecode(addr, decoder):
     elif addr == 4161:
         decoded = OrderedDict(
             [
-                ("EualizeTime", decoder.decode_16bit_uint()),  # 4162
+                ("EqualizeTimeSetPoint", decoder.decode_16bit_uint()),  # 4162
                 ("EqualiseIntervalDay", decoder.decode_16bit_uint()),  # 4163
                 ("MPPTMode", decoder.decode_16bit_uint()),  # 4164
                 ("Aux12Function", decoder.decode_16bit_uint()),  # 4165
