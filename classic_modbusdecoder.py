@@ -12,9 +12,8 @@
 # # --------------------------------------------------------------------------- #
 
 
-from pymodbus.constants import Endian
 from pymodbus.client import ModbusTcpClient as ModbusClient
-from Payload import BinaryPayloadDecoder
+from Payload import BinaryPayloadDecoder, Endian
 from collections import OrderedDict
 import logging
 import sys
@@ -27,7 +26,7 @@ log = logging.getLogger("classic_modbusdecoder")
 # --------------------------------------------------------------------------- #
 def getRegisters(theClient, addr, cnt):
     try:
-        result = theClient.read_holding_registers(addr, count=cnt, slave=10)
+        result = theClient.read_holding_registers(addr, count=cnt)
         if result.function_code >= 0x80:
             log.error(f"error getting {addr} for {count} bytes, result.function_code >=0x80: {result.function_code}")
             return {}
@@ -49,6 +48,15 @@ def getDataDecoder(registers):
 
 # --------------------------------------------------------------------------- #
 # Based on the address, return the decoded OrderedDict
+#
+# Note that the starting address is the target starting register address minus 1.
+# Excerpt from the Midnite Classic MODBUS protocol manual:
+# Note on addresses vs. registers:
+# The modbus specification adds one (1) to the “address” sent to the unit in the packet command to access a “register”. This is
+# so that modbus registers start at 1 rather than 0. The main Classic address map starts at register 4101 but the packet itself
+# sends out address 4100.
+# Some modbus software and libraries will go by register number and some will go by address so make sure which one it works
+# with.
 # --------------------------------------------------------------------------- #
 
 
@@ -102,6 +110,14 @@ def doDecode(addr, decoder):
                 ("EqualizeTime", decoder.decode_16bit_uint()),  # 4143
             ]
         )
+    elif addr == 4148:
+        decoded = OrderedDict(
+            [
+                ("AbsorbVoltageSetPoint", decoder.decode_16bit_int() / 10.0),  # 4149
+                ("FloatVoltageSetPoint", decoder.decode_16bit_int() / 10.0),  # 4150
+                ("EqualizeVoltageSetPoint", decoder.decode_16bit_int() / 10.0),  # 4151
+            ]
+        )
     elif addr == 4360:
         decoded = OrderedDict(
             [
@@ -121,9 +137,11 @@ def doDecode(addr, decoder):
                 ("TotalAmpHours", decoder.decode_16bit_uint()),  # 4381
             ]
         )
-    elif addr == 4163:
+    elif addr == 4161:
         decoded = OrderedDict(
             [
+                ("EualizeTime", decoder.decode_16bit_uint()),  # 4162
+                ("EqualiseIntervalDay", decoder.decode_16bit_uint()),  # 4163
                 ("MPPTMode", decoder.decode_16bit_uint()),  # 4164
                 ("Aux12Function", decoder.decode_16bit_uint()),  # 4165
             ]
@@ -157,6 +175,12 @@ def doDecode(addr, decoder):
                 ("endingAmps", decoder.decode_16bit_int() / 10.0),  # 4246
                 ("skip", decoder.skip_bytes(56)),  # 4247-4274
                 ("ReasonForResting", decoder.decode_16bit_uint()),  # 4275
+            ]
+        )
+    elif addr == 4251:
+        decoded = OrderedDict(
+            [
+                ("DaysBetweenBulkAbsorb", decoder.decode_16bit_int()),  # 4252
             ]
         )
     elif addr == 16386:
@@ -193,7 +217,7 @@ def getModbusData(modeAwake, classicHost, classicPort):
             # Test for successful connect, if not, log error and mark modbusConnected = False
             modbusClient.connect()
 
-            result = modbusClient.read_holding_registers(4163, count=2, slave=10)
+            result = modbusClient.read_holding_registers(4163, count=2)
 
             if result.isError():
                 # close the client
@@ -210,10 +234,12 @@ def getModbusData(modeAwake, classicHost, classicPort):
         log.debug("Read in all the registers at one time")
         theData[4100] = getRegisters(theClient=modbusClient, addr=4100, cnt=44)
         theData[4360] = getRegisters(theClient=modbusClient, addr=4360, cnt=22)
-        theData[4163] = getRegisters(theClient=modbusClient, addr=4163, cnt=2)
+        theData[4148] = getRegisters(theClient=modbusClient, addr=4148, cnt=3)
+        theData[4161] = getRegisters(theClient=modbusClient, addr=4161, cnt=4)
         theData[4209] = getRegisters(theClient=modbusClient, addr=4209, cnt=4)
         theData[4213] = getRegisters(theClient=modbusClient, addr=4213, cnt=6)
         theData[4243] = getRegisters(theClient=modbusClient, addr=4243, cnt=32)
+        theData[4251] = getRegisters(theClient=modbusClient, addr=4251, cnt=1)
         theData[16386] = getRegisters(theClient=modbusClient, addr=16386, cnt=4)
 
         # If we are snoozing, then give up the connection
@@ -285,7 +311,8 @@ def getModbusData(modeAwake, classicHost, classicPort):
         decoded["ChargeStateIcon"] = "mdi:format-float-center"
     elif decoded["ChargeStage"] >= 7:
         decoded["ChargeStateIcon"] = "mdi:approximately-equal"
-    #
+
+    # Charge State text
     chrg_stt_txt_arr = {
         0: "Resting",
         3: "Absorb",
@@ -302,6 +329,7 @@ def getModbusData(modeAwake, classicHost, classicPort):
     except:
         log.error(f"ChargeStateText error. Undefined value:{decoded['ChargeStage']}")
         decoded["ChargeStateText"] = f"No text defined for this value...{str(decoded['ChargeStage'])}"
+
     # AUX 1 & 2 Off-Auto-On
     AUX_OffAutoOn = {
         0: "AUX Off",
